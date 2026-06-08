@@ -5,7 +5,7 @@ import Markdown from "@components/misc/Markdown.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getSortedPosts } from "@utils/content-utils";
+import { getAllSortedPosts, parsePostId } from "@utils/content-utils";
 import { getDir, getPostUrlBySlug } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
@@ -13,11 +13,12 @@ import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import PostMetadata from "../../components/PostMeta.astro";
 import { profileConfig, siteConfig } from "../../config";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
+import LanguageSwitcher from "@components/widget/LanguageSwitcher.astro";
 
 export async function getStaticPaths() {
-	const blogEntries = await getSortedPosts();
+	const blogEntries = await getAllSortedPosts();
 	return blogEntries.map((entry) => ({
-		params: { slug: entry.slug },
+		params: { slug: entry.id },
 		props: { entry },
 	}));
 }
@@ -26,6 +27,25 @@ import { render } from "astro:content";
 
 const { entry } = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(entry);
+
+// --- Language Switcher Logic ---
+const allPosts = await getAllSortedPosts();
+const currentParsed = parsePostId(entry.id);
+
+const variants = allPosts.map(post => {
+    const parsed = parsePostId(post.id);
+    if (parsed.baseId === currentParsed.baseId) {
+        return {
+            id: post.id,
+            lang: parsed.variant || 'default'
+        };
+    }
+    return null;
+}).filter(v => v !== null) as { id: string, lang: string }[];
+
+const hasVariants = variants.length > 1;
+const currentLang = currentParsed.variant || 'default';
+// --- End Language Switcher Logic ---
 
 const jsonLd = {
 	"@context": "https://schema.org",
@@ -68,6 +88,12 @@ const jsonLd = {
                     </div>
                 </div>
             </div>
+            
+            {hasVariants && (
+                <div class="absolute right-6 md:right-9 top-6 z-20 onload-animation">
+                    <LanguageSwitcher variants={variants} currentLang={currentLang} />
+                </div>
+            )}
 
             <!-- title -->
             <div class="relative onload-animation">
@@ -106,7 +132,7 @@ const jsonLd = {
                 <Content />
             </Markdown>
 
-            {licenseConfig.enable && <License title={entry.data.title} slug={entry.slug} pubDate={entry.data.published} class="mb-6 rounded-xl license-container onload-animation"></License>}
+            {licenseConfig.enable && <License title={entry.data.title} slug={entry.id} pubDate={entry.data.published} class="mb-6 rounded-xl license-container onload-animation"></License>}
 
         </div>
     </div>

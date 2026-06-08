@@ -1,0 +1,57 @@
+---
+import { Icon } from "astro-icon/components";
+import { postLanguages } from "../../config/languages";
+import { getPostUrlBySlug } from "@utils/url-utils";
+
+interface Variant {
+    id: string;
+    lang: string;
+}
+
+interface Props {
+    variants: Variant[];
+    currentLang: string;
+}
+
+const { variants, currentLang } = Astro.props;
+
+// Sort variants so default is first
+const sortedVariants = variants.sort((a, b) => {
+    if (a.lang === 'default') return -1;
+    if (b.lang === 'default') return 1;
+    return a.lang.localeCompare(b.lang);
+});
+
+function getLangName(lang: string) {
+    if (lang === 'default') return postLanguages.default;
+    return postLanguages.variants[lang] || lang.toUpperCase();
+}
+
+const currentLangName = getLangName(currentLang);
+---
+
+<div class="relative group z-50">
+    <button class="btn-regular rounded-lg h-9 px-3 flex items-center gap-2 text-sm font-medium transition active:scale-95">
+        <Icon name="material-symbols:translate" class="text-[1.25rem] opacity-75" />
+        {currentLangName}
+        <Icon name="material-symbols:keyboard-arrow-down-rounded" class="text-[1.25rem] opacity-75 group-hover:rotate-180 transition-transform duration-300" />
+    </button>
+    
+    <div class="absolute right-0 top-full mt-2 w-40 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right scale-95 group-hover:scale-100">
+        <div class="card-base p-2 flex flex-col gap-1 shadow-xl">
+            {sortedVariants.map((variant) => (
+                <a 
+                    href={getPostUrlBySlug(variant.id)} 
+                    class:list={[
+                        "flex items-center px-3 py-2 rounded-md text-sm transition-colors",
+                        variant.lang === currentLang 
+                            ? "bg-[var(--primary)] text-white font-bold" 
+                            : "hover:bg-[var(--btn-plain-bg-hover)] active:bg-[var(--btn-plain-bg-active)] text-75"
+                    ]}
+                >
+                    {getLangName(variant.lang)}
+                </a>
+            ))}
+        </div>
+    </div>
+</div>
