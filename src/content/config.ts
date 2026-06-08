@@ -1,6 +1,7 @@
 import { defineCollection, z } from "astro:content";
 
 const postsCollection = defineCollection({
+	// loader 将自动从 posts 目录加载 markdown 文件
 	schema: z.object({
 		title: z.string(),
 		published: z.date(),
@@ -19,9 +20,12 @@ const postsCollection = defineCollection({
 		nextSlug: z.string().default(""),
 	}),
 });
+
 const specCollection = defineCollection({
-	schema: z.object({}),
+	// loader 将自动从 spec 目录加载 markdown 文件
+	schema: z.object({}).passthrough(),
 });
+
 export const collections = {
 	posts: postsCollection,
 	spec: specCollection,

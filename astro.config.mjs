@@ -21,6 +21,7 @@ import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.m
 import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
+import rehypeMermaid from "rehype-mermaid";
 import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 
@@ -113,6 +114,7 @@ export default defineConfig({
 			parseDirectiveNode,
 		],
 		rehypePlugins: [
+			[rehypeMermaid, { strategy: 'img-svg', dark: true }],
 			rehypeKatex,
 			rehypeSlug,
 			[

@@ -22,10 +22,10 @@ export async function getStaticPaths() {
 	}));
 }
 
-const { entry } = Astro.props;
-const { Content, headings } = await entry.render();
+import { render } from "astro:content";
 
-const { remarkPluginFrontmatter } = await entry.render();
+const { entry } = Astro.props;
+const { Content, headings, remarkPluginFrontmatter } = await render(entry);
 
 const jsonLd = {
 	"@context": "https://schema.org",

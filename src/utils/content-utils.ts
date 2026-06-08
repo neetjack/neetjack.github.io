@@ -14,6 +14,14 @@ async function getRawSortedPosts() {
 		const dateB = new Date(b.data.published);
 		return dateA > dateB ? -1 : 1;
 	});
+	
+	// Astro 5 Content Layer API compatibility: glob loader does not generate slug
+	sorted.forEach((post) => {
+		if (!post.slug) {
+			post.slug = post.id;
+		}
+	});
+
 	return sorted;
 }
 

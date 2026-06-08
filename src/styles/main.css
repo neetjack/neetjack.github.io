@@ -1,5 +1,9 @@
 @tailwind components;
 
+html {
+    scroll-behavior: smooth;
+}
+
 @layer components {
     .card-base {
         @apply rounded-[var(--radius-large)] overflow-hidden bg-[var(--card-bg)] transition;
