@@ -1,6 +1,6 @@
 ---
-title: Windowing
-published: 2026-06-07
+title: Windowing/窓掛け[EN/JP]
+published: 2026-06-08
 description: Window function 
 image: ./cover.jpg
 tags: [MIR,DSP]
@@ -8,127 +8,170 @@ category: DSP
 draft: false
 ---
 
-# Windowing
+# 窓掛け
 
-## What is Windowing
+## 0.[Colab Codes](https://colab.research.google.com/drive/1jkihJj20s5pTQXZI450owh5qw57-bLng?usp=sharing)
 
-- Windowing is the process of taking a small subset of a larger dataset, for processing and analysis
-- Windowing is accompished using a window fuction or a tapering function
+## 1.窓掛けとは
 
-## Why we need windowing
+- 窓掛けとは、処理や分析のために、大規模なデータセットからその一部を切り出すプロセスです
+- 窓掛けは、窓関数またはテーパ関数を使用して行われます
 
-There are two types of FFT measurement 
+## 2.窓掛けが必要な理由
 
-Periodic Measurement
+信号測定には2つの種類があります
 
-- Rare
-- Captured signals are symmetric and can be appended to create a continuous infinite waveform
-- FFT of periodic signal is **accurate**
+1.周期信号の測定
 
-Non-Periodic Measurement
+- レア
+- キャプチャされた信号は対称であり、それらを接合することで連続した無限の波形を作成することが可能です
+- 周期信号のFFTは**正確**である
 
-- Usually, captured signal are fall into this cagatory
-- Captured signals are is not symmetric
-- Appending the signals would not produce the original continuous infinite waveform
-- FFT of non-periodic signal is **misleading**
+2.非周期的信号の測定
 
-Spectral Leakage
+- 通常、キャプチャされた信号は、このカテゴリーに分類されます
+- 捕捉された信号は対称ではない
+- 信号を接合していても、元の連続した無限の波形は再現されない
+- 非周期信号のFFTは**不正確**である
 
-- When a non-periodically signal is appended in the `time domain`, it produces **discontinuities**
-- These discontinuities,which are short events in the time domain result in wide events in the `frequency domain`
-- The wide spread in the frequency domain stemming from the original spectral line is the spectral leakage
-- Spectral leakage is a consequence of non-periodic measurement
-- Windowing functions are used to alleviate spectral leakage
+スペクトル リーク
 
-## Window Function
+- `時間領域`に非周期的な信号が接合される場合、**不連続性**が引き起こされます
+- 時間領域では短い事象であるこれらの不連続性は、`周波数領域`では大きな事象となります
+- 元のスペクトル線に起因する周波数領域における広範囲な広がりが、スペクトルリークである
+- スペクトルリークは、非周期的な測定に伴う結果である
+- 窓関数（ウィンドウ関数）は、スペクトル漏れの抑制に用いられます
 
-### Definition
+## 3.窓関数
 
-- A window funcion is a mathematical function that is zero valued outside of some chosen interval, symmetric around middle interval, having maximum value in the middle and tapers away from the middle.
-- The main purpose of a window is to reduce the sharp discontinuities that occur when trying to append non-periodically measured signal
-- There are different types of windows catered to specific signal processing requirements
+### 3.1.定義
 
-### Process
+- 窓関数とは、特定の区間以外では値がゼロとなり、その区間の中心を対称軸として左右対称であり、中心で最大値を取り、中心から離れるにつれて値が小さくなっていく数学的関数である
+- 窓関数を使用するの目的は、非周期的に測定された信号を連結する際に現れる鋭い不連続性を緩和することです。
+- 特定の信号処理要件に合わせて、さまざまな種類の窓関数があります
 
-Non periodically 
--> Signal multiplied by chosen window function 
--> Windowed signal than appended to create continuous waveform
--> Sharp edges are reduced due to windowing
-
-- with out windowing
-```mermaid
-graph LR;
-    A[Non-periodic Signal] --> |FFT| B[Spectrum with spectral leakage];
 ```
-- with windowing
+boxcar: 矩形窓
+triang: 三角窓
+blackman: ブラックマン窓
+hamming: ハミング窓
+hann: ハン窓
+bartlett: バートレット窓
+flattop: フラットトップ窓
+parzen: パーゼン窓
+bohman: ボーマン窓
+blackmanharris: ブラックマン・ハリス窓
+nuttall: ナットール窓
+barthann: バートレット・ハン窓
+kaiser: カイザー窓
+gaussian: ガウス窓
+general_gaussian: 一般化ガウス窓
+dpss: ディスクリート・プロレト・スペクトル・シーケンス窓
+chebwin: チェビシェフ窓
+```
+
+### 3.2.プロセス
+
+非周期的信号
+-> 信号に選択した窓関数を掛けた
+-> 窓掛けた信号を連結して連続波形を作成する
+-> 窓掛け処理により、鋭いエッジが緩和される
+
+- 窓掛けなし
 ```mermaid
 graph LR;
-    A[Non-periodic Signal] --> |Multiplied| B[Window function] --> |FFT| C[Spectrum with less spectral leakage];
+    A[非周期的信号] --> |FFT| B[スペクトルリークを伴うスペクトル];
+```
+- 窓掛けあり
+```mermaid
+graph LR;
+    A[非周期的信号] --> |掛け算| B[窓関数] --> |FFT| C[スペクトルリークが少ないスペクトル];
 ```
 :::note
-Convolving a window function with a signal sets the signal values before and after the window to zero, thereby preventing discontinuities caused by jumps when expanding the signal.
+信号と窓関数を畳み込むと、窓の前後にある信号の値がゼロに設定され、それによって信号を延長する際、ジャンプによる不連続性が抑制される
 :::
 
-### Window corrections
+### 3.3.窓の補正
 
-- Windowed signal does **NOT** exactly resemble the actual waveform
-- There is a compromise on both **Amplitude** and **energy** of the original signal
-- Corrections are available for each window type but both amplitude and energy corrections **CANNOT** be applied ant the same time
+- 窓掛けた信号は、実際の波形と**完全に一致するわけではありません**
+- 元の信号の**振幅**と**エネルギー**の両方にトレードオフが伴います
+- 窓タイプごとに補正を行うことは可能ですが、振幅補正とエネルギー補正を同時に適用することは**できません**
 :::CAUTION
-If you windowing a periodically captured signal，it would result in spectal leakage in the frequency domain.
+周期的信号を窓掛けると、周波数領域でスペクトルリークが引き起こされます
 :::
 
-## Window Types
+## 4.窓関数の種類
 
-### Ideal Window
+### 4.1.理想的な窓関数
 
-### Uniform/Rectangular Window
+- 理想的な窓関数であれば、主ローブの幅が狭く、サイドローブの減衰が大きい
+- 周波数領域におけるピュアトーンでは、理想的な窓関数を使用すると、同じ振幅を持つ単一のスペクトル線が得られる
+- スペクトルリークなし
+- サイドローブなし
 
-DEF:
-- Unit amplitude for all time samples(not attenuate any part of the time data)
-- Same as not applying any window
+### 4.2.Uniform/Rectangular/Boxcar Window
 
-Best for 
-- already periodic signals
-- Transients, Bursts
+[JOS_Rectangular Window](https://ccrma.stanford.edu/~jos/sasp/Spectrum_Windowed_Sinusoid.html#15711)
 
-### Hann/Hanning Window
+[JOS_Rectangular Window Side-Lobes](https://ccrma.stanford.edu/~jos/sasp/Rectangular_Window_Side_Lobes.html#10162)
 
-DEF:
-- Name comes form Julius von Hann
-- Attenuate the input signal at both ends
-- End points touch **Zero**
+定義:
+- すべての時間サンプルに対する振幅を1にします（時間データのどの部分も減衰させない）
+- 窓を掛けないのと同様です
 
-Pro:
-- Eliminating all discontinuities
-- Good frequency resolution
-- Reduced spectral leakage
+### 4.3.Hamming Window Family
 
-Cons:
-- At the expense of amplitude accuracy
-- Minor amplitude error occurs due to the shape
+[JOS_ Hamming Window Family](https://ccrma.stanford.edu/~jos/sasp/Generalized_Hamming_Window_Family.html#eq:ghwf)
 
-Best for
-- Broband signals
-- Noise
+- 基本的に、ハミング窓の族は、矩形窓にコサイン波の周期を掛けることで構成されます
 
+|メリット|デメリット|
+|:---:|:---:|
+|低いサイドローブ|メインローブの幅が倍になる|
 
-### Hamming Window
+#### 4.3.1.Hann/Hanning Window
 
-DEF:
-- Name comes from Richard W Hamming
-- End points does **NOT** touch zero
+[JOS_Hann Window](https://ccrma.stanford.edu/~jos/sasp/Hann_Hanning_Raised_Cosine.html#10248)
 
-Pro:
-- First side lobe of a Hann window is canceled
+定義:
+- この名前はJulius von Hannに由来します
+- 窓の両端で入力信号を減衰させる
+- 端点は**ゼロ**に到達する
 
-Cons:
-- Spectral leakage is higher than Hann window
-- Slight discontinuity in the convoluted signal
-
-### Blackman Window
-
-DEF:
+|メリット|デメリット|
+|:---:|:---:|
+|すべての不連続性を排除する|振幅の精度を犠牲にして|
+|優れた周波数解像度|形状に由来する微小な振幅誤差が起こる|
 
 
-### Chebyshev Window
+#### 4.3.2.Hamming Window
+
+[JOS_Hamming Window](https://ccrma.stanford.edu/~jos/sasp/Hamming_Window.html#10264)
+
+定義:
+- この名前はRichard W Hamming由来します
+- 端点はゼロには**到達しない**
+
+|メリット|デメリット|
+|:---:|:---:|
+|ハンウィンドウの第1サイドローブは消される|スペクトルリークはハン窓よりも大きい|
+||畳み込み信号にわずかな不連続が見られる|
+
+
+#### 4.3.3.Blackman-Harris Window
+
+[JOS_Blackman-Harris Window](https://ccrma.stanford.edu/~jos/sasp/Three_Term_Blackman_Harris_Window.html#10289)
+
+定義:
+- ハン・窓およびハミング・窓に比べて主ローブが広い
+- ハン窓やハミング窓に比べてサイドローブの減衰が優れている
+
+#### 4.3.4.Hamming Window Familyのまとめ
+
+|窓関数|第1サイドローブ|サイドローブの減衰率|
+|:-------------:|:-----------:|:------------------------:|
+|Rectangular window|-13dB|−6dB/oct|
+|Hanning window|-31dB|−18dB/oct|
+|Humming window|-42dB|−6dB/oct|
+|Blackman-Harris window|-71dB|−6dB/oct|
+
