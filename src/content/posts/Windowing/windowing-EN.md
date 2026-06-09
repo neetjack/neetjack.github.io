@@ -66,7 +66,7 @@ graph LR;
 - with windowing
 ```mermaid
 graph LR;
-    A[Non-periodic Signal] --> |Multiplied| B[Window function] --> |FFT| C[Spectrum with less spectral leakage];
+    A[Non-periodic Signal] --> |Multiplied by Window Function| B[Windowed Signal] --> |FFT| C[Spectrum with less spectral leakage];
 ```
 :::note
 Convolving a window function with a signal sets the signal values before and after the window to zero, thereby preventing discontinuities caused by jumps when expanding the signal
