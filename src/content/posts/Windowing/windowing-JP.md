@@ -2,7 +2,7 @@
 title: Windowing/窓掛け[EN/JP]
 published: 2026-06-08
 description: Window function 
-image: ./cover.jpg
+image: ./cover.png
 tags: [MIR,DSP]
 category: DSP
 draft: false
