@@ -464,7 +464,7 @@ graph TD;
     B --> C(["Mel-warped Spectrum"])
     C --> D[Logarithm]
     D --> E(["Log-Mel Spectrum"])
-    E --> F[DCT (Discrete Cosine Transform)]
+    E --> F[DCT-Discrete Cosine Transform]
     F --> G(["Full MFCCs"])
     G --> H[Feature Truncation and Processing: <br/> Retain low-order coefficients, <br/> usually discard the 0th coefficient]
     H --> I(["Output: Final MFCC Feature Vector"])
