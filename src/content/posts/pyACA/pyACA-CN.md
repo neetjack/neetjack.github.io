@@ -466,7 +466,7 @@ graph TD;
     D --> E(["对数梅尔频谱 <br/> Log-Mel Spectrum"])
     E --> F[离散余弦变换 <br/> DCT]
     F --> G(["完整 MFCC 系数 <br/> MFCCs"])
-    G --> H[特征截断与处理: <br/> 保留低阶系数，通常舍弃第0个系数]
+    G --> H[特征截断与处理: <br/> 保留低阶系数，<br/> 通常舍弃第0个系数]
     H --> I(["输出：最终的 MFCC 特征向量"])
     classDef process fill:Blue,stroke:#333,stroke-width:2px;
     classDef data fill:black,stroke:#0288d1,stroke-width:2px;
